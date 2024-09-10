@@ -25,3 +25,7 @@ minor:
 # Major changes: Breaks the API
 major:
 	@make release version=${GIT_NEXT_MAJOR}
+
+# Initialize the project
+init:
+	@make release version=v0.0.1
