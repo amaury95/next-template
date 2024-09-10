@@ -29,3 +29,10 @@ major:
 # Initialize the project
 init:
 	@make release version=v0.0.1
+
+# deploy the project
+deploy:
+	@helm upgrade --install client deployment \
+	--values deployment/values.yaml \
+	-f deployment/secrets.yaml \
+	-n next-client --create-namespace
