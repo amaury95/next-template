@@ -35,4 +35,5 @@ deploy:
 	@helm upgrade --install client deployment \
 	--values deployment/values.yaml \
 	-f deployment/secrets.yaml \
-	-n next-client --create-namespace
+	-n next-client --create-namespace\
+	--version $(GIT_VERSION)
