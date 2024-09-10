@@ -32,8 +32,8 @@ init:
 
 # deploy the project
 deploy:
-	@helm upgrade --install client deployment \
+	@helm template client deployment \
 	--values deployment/values.yaml \
 	-f deployment/secrets.yaml \
-	-n next-client --create-namespace\
-	--version $(GIT_VERSION)
+	-n next-client --create-namespace \
+	--set image.tag=$(GIT_VERSION)
