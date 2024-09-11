@@ -32,7 +32,7 @@ init:
 
 # deploy the project
 deploy:
-	@helm template client deployment \
+	@helm upgrade --install client deployment \
 	--values deployment/values.yaml \
 	-f deployment/secrets.yaml \
 	-n next-client --create-namespace \
