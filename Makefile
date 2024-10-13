@@ -1,39 +1,33 @@
 # Release new version
-GIT_TARGET_BRANCH=main
+GIT_BRANCH=main
 
-GIT_VERSION=$(shell git tag --list | sort -V | tail -n 1)
-GIT_NEXT_PATCH=$(shell echo $(GIT_VERSION) | awk -F. '{print $$1"."$$2"."$$3+1}')
-GIT_NEXT_MINOR=$(shell echo $(GIT_VERSION) | awk -F. '{print $$1"."$$2+1".0"}')
-GIT_NEXT_MAJOR=v$(shell echo $(GIT_VERSION) | awk -F. '{print $$1+1".0.0"}')
+GIT_CURRENT_VERSION=$(shell git tag --list | sort -V | tail -n 1)
+GIT_NEXT_PATCH=$(shell echo $(GIT_CURRENT_VERSION) | awk -F. '{print $$1"."$$2"."$$3+1}')
+GIT_NEXT_MINOR=$(shell echo $(GIT_CURRENT_VERSION) | awk -F. '{print $$1"."$$2+1".0"}')
+GIT_NEXT_MAJOR=$(shell echo $(GIT_CURRENT_VERSION) | awk -F. '{print $$1+1".0.0"}')
 
 tag:
 	@git tag $(version)
 
 push:
-	@git push origin $(GIT_TARGET_BRANCH) $(version)
+	@git push origin ${GIT_BRANCH} $(version)
 
-release: tag push
+# Initialize the project's semantic versioning
+init:
+	@make tag version=0.0.1
 
 # Bug fixes
 patch:
-	@make release version=${GIT_NEXT_PATCH}
+	@make tag version=${GIT_NEXT_PATCH}
 
 # Minor changes: Does not break the API
 minor:
-	@make release version=${GIT_NEXT_MINOR}
+	@make tag version=${GIT_NEXT_MINOR}
 
 # Major changes: Breaks the API
 major:
-	@make release version=${GIT_NEXT_MAJOR}
+	@make tag version=${GIT_NEXT_MAJOR}
 
-# Initialize the project
-init:
-	@make release version=v0.0.1
-
-# deploy the project
-deploy:
-	@helm upgrade --install client deployment \
-	--values deployment/values.yaml \
-	-f deployment/secrets.yaml \
-	-n next-client --create-namespace \
-	--set image.tag=$(GIT_VERSION)
+# Release current version
+release: 
+	@make push version=${GIT_CURRENT_VERSION}

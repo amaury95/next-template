@@ -9,22 +9,11 @@ metadata:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  rules:
-  {{- range .Values.ingress.hosts }}
-  - host: {{ .host }}
-    http:
-      paths:
-        {{- range .paths }}
-        - path: {{ .path }}
-          pathType: {{ .pathType | default "Prefix" }}
-          backend:
-            service:
-              name: 
-                {{ include "client.fullname" $ | nindent 16 }}
-              port:
-                number: {{ $.Values.service.port }}
-        {{- end }}
-  {{- end }}
+  defaultBackend:
+    service:
+      name: {{ include "client.fullname" . }}
+      port:
+        number: {{ .Values.service.port }}
   tls:
     {{- range .Values.ingress.tls }}
     - hosts:
